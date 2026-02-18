@@ -11,7 +11,7 @@ package com.itson.banco_jdbc;
 public class Banco_JDBC {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        System.out.println("PINCHI PUTITA");
+        System.out.println("Hello World!"); 
+        olalaslalalasllad
     }
 }
