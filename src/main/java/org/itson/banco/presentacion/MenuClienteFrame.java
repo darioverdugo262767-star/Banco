@@ -80,7 +80,7 @@ public class MenuClienteFrame extends javax.swing.JFrame {
         lbl2.setText("Saldo disponible:");
 
         lblSaldoCuenta.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblSaldoCuenta.setText("LBL EL SALDO DISPONIBLE d333dd");
+        lblSaldoCuenta.setText("LBL EL SALDO DISPONIBLE");
 
         javax.swing.GroupLayout pnlInfoCuentaLayout = new javax.swing.GroupLayout(pnlInfoCuenta);
         pnlInfoCuenta.setLayout(pnlInfoCuentaLayout);
