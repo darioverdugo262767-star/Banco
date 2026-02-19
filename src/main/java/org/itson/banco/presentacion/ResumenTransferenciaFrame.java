@@ -19,26 +19,29 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     private Cliente clienteLogueado;
     private ITransferenciaDAO transferenciaDAO;
     private String numCuenta;
+    private Transferencia transferenciaAMostrar;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResumenTransferenciaFrame.class.getName());
 
     /**
      * Creates new form ResumenTransferenciaFrame
      */
-    public ResumenTransferenciaFrame(Cliente clienteLogueado,Transaccion transaccion,Transferencia transferencia, ITransferenciaDAO transferenciaDAO) {
+    public ResumenTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, Transferencia transferencia) {
         initComponents();
-        
-        String MontoTransferido =  transaccion.getMonto()+""+transaccion.getMonto();
-        this.lblMontoTransferido = setText(MontoTransferido);
-        String IdTransferencia =  transferencia.getId_transfencia()+""+transferencia.getId_transfencia();
-        this.lblNumTransferencia = setText(IdTransferencia);
-        String FechaHora =  transaccion.getFechaHora()+""+transaccion.getFechaHora();
-        this.lblFechaOp = setText(FechaHora);
-        }
+        this.clienteLogueado = clienteLogueado;
+        this.transferenciaDAO = transferenciaDAO;
+        this.transferenciaAMostrar = transferencia;
+        this.numCuenta = transferencia.getNumero_Cuenta();
+        this.lblMontoTransferido.setText("$ " + transferencia.getMonto().toString());
+        this.lblNumTransferencia.setText(String.valueOf(transferencia.getId_transfencia()));
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        this.lblFechaOp.setText(sdf.format(transferencia.getFechaHora().getTime()));
+    }
     
     
     public void continuar(){
         MenuClienteFrame siguientePantalla = new MenuClienteFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
         siguientePantalla.setVisible(true);
+        dispose();
     }
     
 
@@ -101,57 +104,59 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         jLabel4.setText("Fecha y hora de la operacion : ");
 
         lblMontoTransferido.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblMontoTransferido.setText("Aqui se imprimira la cuenta del cliente que realiza la transferencia");
+        lblMontoTransferido.setText("aadafafaf");
 
         lblNumTransferencia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblNumTransferencia.setText("Aqui se imprimira el numero de cuenta del destinatario");
+        lblNumTransferencia.setText("adad");
 
         lblFechaOp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblFechaOp.setText("aqui se imprimira el saldo que se transfirio");
+        lblFechaOp.setText("adad");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(lblNumTransferencia)
-                .addGap(62, 62, 62))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(117, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(98, 98, 98)
-                        .addComponent(lblFechaOp))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(127, 127, 127)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(lblMontoTransferido)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(126, 126, 126))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblMontoTransferido)
+                        .addGap(187, 187, 187))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblNumTransferencia)
+                        .addGap(197, 197, 197))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(77, 77, 77))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(103, 103, 103))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblFechaOp)
+                        .addGap(192, 192, 192))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblMontoTransferido)
-                .addGap(20, 20, 20)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblNumTransferencia)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblFechaOp)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -164,15 +169,16 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(171, 171, 171)
-                        .addComponent(btnConfirmar))
+                        .addGap(106, 106, 106)
+                        .addComponent(jLabel1))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(106, 106, 106)
-                        .addComponent(jLabel1)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(41, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnConfirmar)
+                .addGap(185, 185, 185))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,9 +196,7 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,26 +213,6 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmar;

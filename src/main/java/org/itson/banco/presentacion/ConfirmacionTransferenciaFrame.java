@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import org.itson.banco.dtos.NuevaTransferenciaDTO;
 import org.itson.banco.entidades.Cliente;
+import org.itson.banco.entidades.Transferencia;
 import org.itson.banco.persistencia.ITransferenciaDAO;
 import org.itson.banco.persistencia.PersistenciaException;
 
@@ -47,13 +48,13 @@ public class ConfirmacionTransferenciaFrame extends javax.swing.JFrame {
                 monto
             );
             
-            transferenciaDAO.crearTransferencia(dto);
+            Transferencia transferenciaResultante = transferenciaDAO.crearTransferencia(dto);
             
             JOptionPane.showMessageDialog(this, "Transferencia realizada con éxito.");
             
             // Volver al menú principal
-            MenuClienteFrame menu = new MenuClienteFrame(clienteLogueado, transferenciaDAO, numCuenta);
-            menu.setVisible(true);
+            ResumenTransferenciaFrame resumen = new ResumenTransferenciaFrame(clienteLogueado, transferenciaDAO, transferenciaResultante);
+            resumen.setVisible(true);
             this.dispose();
         } catch (PersistenciaException e) {
             JOptionPane.showMessageDialog(this, "Error al procesar la transferencia: " + e.getMessage());

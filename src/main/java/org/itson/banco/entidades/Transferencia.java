@@ -21,13 +21,14 @@ public class Transferencia extends Transaccion{
 
     public Transferencia(Integer id_transfencia, String cuentaDestino, Integer id, GregorianCalendar fechaHora, BigDecimal monto, String numero_Cuenta) {
         super(id, fechaHora, monto, numero_Cuenta);
-        this.id_transfencia = id_transfencia;
+        this.id_transfencia = id;
         this.cuentaDestino = cuentaDestino;
     }
 
     public Integer getId_transfencia() {
         return id_transfencia;
     }
+    
 
     public void setId_transfencia(Integer id_transfencia) {
         this.id_transfencia = id_transfencia;

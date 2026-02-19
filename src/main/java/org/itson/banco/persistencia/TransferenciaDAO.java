@@ -50,6 +50,7 @@ public class TransferenciaDAO implements ITransferenciaDAO {
             int idTransaccion = 0;
             if (rs.next()) {
                 idTransaccion = rs.getInt(1);
+                System.out.println("ID generado exitosamente: " + idTransaccion);
             }
 
             PreparedStatement comandoF = conexion.prepareStatement(sqlTransf);

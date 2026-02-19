@@ -113,7 +113,7 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
         lbl1.setText("Cantidad a transferir");
 
         lblSaldoDisponible.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
-        lblSaldoDisponible.setText("Saldo Disponible:");
+        lblSaldoDisponible.setText("A");
 
         txtSaldoaIngresar.setFont(new java.awt.Font("Ebrima", 0, 24)); // NOI18N
         txtSaldoaIngresar.addActionListener(new java.awt.event.ActionListener() {
@@ -132,7 +132,7 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
         });
 
         lblSaldo.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
-        lblSaldo.setText("Aqui se pondra el saldo");
+        lblSaldo.setText("Saldo Disponible:");
 
         btnRegresar.setBackground(new java.awt.Color(217, 217, 217));
         btnRegresar.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 36)); // NOI18N
@@ -153,19 +153,20 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(btnRegresar)
                         .addGap(100, 100, 100)
-                        .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl1)
-                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
-                                .addGap(45, 45, 45)
-                                .addComponent(lblSaldoDisponible))))
+                        .addComponent(lbl1))
                     .addGroup(pnlPrincipalLayout.createSequentialGroup()
                         .addGap(241, 241, 241)
                         .addComponent(btnSiguiente))
                     .addGroup(pnlPrincipalLayout.createSequentialGroup()
                         .addGap(208, 208, 208)
+                        .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(224, 224, 224)
                         .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblSaldo)
-                            .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                .addGap(60, 60, 60)
+                                .addComponent(lblSaldoDisponible)))))
                 .addContainerGap(186, Short.MAX_VALUE))
         );
         pnlPrincipalLayout.setVerticalGroup(
@@ -180,11 +181,11 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
                         .addComponent(btnRegresar)))
                 .addGap(18, 18, 18)
                 .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSaldo)
                 .addGap(18, 18, 18)
                 .addComponent(lblSaldoDisponible)
-                .addGap(18, 18, 18)
-                .addComponent(lblSaldo)
-                .addGap(49, 49, 49)
+                .addGap(61, 61, 61)
                 .addComponent(btnSiguiente)
                 .addContainerGap(92, Short.MAX_VALUE))
         );
