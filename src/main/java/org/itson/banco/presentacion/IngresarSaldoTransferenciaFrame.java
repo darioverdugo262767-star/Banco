@@ -29,60 +29,126 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        pnlPrincipal = new javax.swing.JPanel();
         lbl1 = new javax.swing.JLabel();
-        txtSaldoaIngresar = new javax.swing.JTextField();
         lblSaldoDisponible = new javax.swing.JLabel();
-        btnIngresarSaldo = new javax.swing.JButton();
+        txtSaldoaIngresar = new javax.swing.JTextField();
+        btnSiguiente = new javax.swing.JButton();
+        lblSaldo = new javax.swing.JLabel();
+        btnRegresar = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Numero de cuenta del destinatario");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lbl1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        pnlPrincipal.setBackground(new java.awt.Color(249, 244, 244));
+
+        lbl1.setFont(new java.awt.Font("Ebrima", 1, 24)); // NOI18N
         lbl1.setText("Cantidad a transferir");
 
-        txtSaldoaIngresar.setText("jTextField1");
+        lblSaldoDisponible.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
+        lblSaldoDisponible.setText("Saldo Disponible:");
 
-        lblSaldoDisponible.setText("un lbl donde se pondra el saldo disponible de la cuenta");
+        txtSaldoaIngresar.setFont(new java.awt.Font("Ebrima", 0, 24)); // NOI18N
+        txtSaldoaIngresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSaldoaIngresarActionPerformed(evt);
+            }
+        });
 
-        btnIngresarSaldo.setText("Siguiente");
+        btnSiguiente.setBackground(new java.awt.Color(204, 159, 243));
+        btnSiguiente.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnSiguiente.setText("Siguiente");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSiguienteActionPerformed(evt);
+            }
+        });
+
+        lblSaldo.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
+        lblSaldo.setText("Aqui se pondra el saldo");
+
+        btnRegresar.setBackground(new java.awt.Color(217, 217, 217));
+        btnRegresar.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 36)); // NOI18N
+        btnRegresar.setText("<-");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
+        pnlPrincipal.setLayout(pnlPrincipalLayout);
+        pnlPrincipalLayout.setHorizontalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)
+                        .addGap(100, 100, 100)
+                        .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl1)
+                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(lblSaldoDisponible))))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(241, 241, 241)
+                        .addComponent(btnSiguiente))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(208, 208, 208)
+                        .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblSaldo)
+                            .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(186, Short.MAX_VALUE))
+        );
+        pnlPrincipalLayout.setVerticalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(lbl1))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)))
+                .addGap(18, 18, 18)
+                .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblSaldoDisponible)
+                .addGap(18, 18, 18)
+                .addComponent(lblSaldo)
+                .addGap(49, 49, 49)
+                .addComponent(btnSiguiente)
+                .addContainerGap(92, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(lbl1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(154, 154, 154)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnIngresarSaldo)
-                            .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addComponent(lblSaldoDisponible)))
-                .addContainerGap(58, Short.MAX_VALUE))
+            .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addComponent(lbl1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtSaldoaIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblSaldoDisponible)
-                .addGap(18, 18, 18)
-                .addComponent(btnIngresarSaldo)
-                .addContainerGap(104, Short.MAX_VALUE))
+            .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtSaldoaIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSaldoaIngresarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSaldoaIngresarActionPerformed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegresarActionPerformed
+
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSiguienteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -110,10 +176,13 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnIngresarSaldo;
+    private javax.swing.JButton btnRegresar;
+    private javax.swing.JButton btnSiguiente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lbl1;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JLabel lblSaldoDisponible;
+    private javax.swing.JPanel pnlPrincipal;
     private javax.swing.JTextField txtSaldoaIngresar;
     // End of variables declaration//GEN-END:variables
 }

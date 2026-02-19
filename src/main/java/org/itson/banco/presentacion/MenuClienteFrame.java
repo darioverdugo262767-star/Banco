@@ -4,6 +4,11 @@
  */
 package org.itson.banco.presentacion;
 
+import java.math.BigDecimal;
+import org.itson.banco.entidades.Cliente;
+import org.itson.banco.persistencia.ITransferenciaDAO;
+import org.itson.banco.persistencia.PersistenciaException;
+
 /**
  *
  * @author Dario
@@ -15,8 +20,18 @@ public class MenuClienteFrame extends javax.swing.JFrame {
     /**
      * Creates new form MenuClienteForm
      */
-    public MenuClienteFrame() {
+    public MenuClienteFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuenta) {
         initComponents();
+        String nombreCompleto = clienteLogueado.getNombres() + " " + clienteLogueado.getApellidoPaterno();
+        this.lblNombreCliente.setText(nombreCompleto);
+        this.lblNumCuenta.setText(numCuenta);
+        try {
+            BigDecimal saldo = transferenciaDAO.consultarSaldoCuenta(numCuenta);
+            this.lblSaldoCuenta.setText("$ " + saldo.toString());
+        } catch (PersistenciaException ex) {
+            this.lblSaldoCuenta.setText("Error");
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -29,8 +44,6 @@ public class MenuClienteFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlPrincipal = new javax.swing.JPanel();
-        pnlRegresar = new javax.swing.JPanel();
-        btnRegresar = new javax.swing.JButton();
         pnlInfoCuenta = new javax.swing.JPanel();
         lblNombreCliente = new javax.swing.JLabel();
         lbl1 = new javax.swing.JLabel();
@@ -38,9 +51,10 @@ public class MenuClienteFrame extends javax.swing.JFrame {
         lbl2 = new javax.swing.JLabel();
         lblSaldoCuenta = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        btnTranferir = new javax.swing.JButton();
-        btnRetiro50 = new javax.swing.JButton();
         btnHistorial = new javax.swing.JButton();
+        btnRetiro50 = new javax.swing.JButton();
+        btnTranferir = new javax.swing.JButton();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 600));
@@ -48,24 +62,7 @@ public class MenuClienteFrame extends javax.swing.JFrame {
 
         pnlPrincipal.setBackground(new java.awt.Color(249, 244, 244));
 
-        btnRegresar.setText("Añadir la flechita de regreso");
-        btnRegresar.addActionListener(this::btnRegresarActionPerformed);
-
-        javax.swing.GroupLayout pnlRegresarLayout = new javax.swing.GroupLayout(pnlRegresar);
-        pnlRegresar.setLayout(pnlRegresarLayout);
-        pnlRegresarLayout.setHorizontalGroup(
-            pnlRegresarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRegresarLayout.createSequentialGroup()
-                .addComponent(btnRegresar)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        pnlRegresarLayout.setVerticalGroup(
-            pnlRegresarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRegresarLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(btnRegresar)
-                .addContainerGap(47, Short.MAX_VALUE))
-        );
+        pnlInfoCuenta.setBackground(new java.awt.Color(249, 244, 244));
 
         lblNombreCliente.setFont(new java.awt.Font("Ebrima", 1, 24)); // NOI18N
         lblNombreCliente.setText("LBL DONDE SE PONDRA EL NOMBRE DEL CLIENTE AL INICIAR SECION");
@@ -94,7 +91,7 @@ public class MenuClienteFrame extends javax.swing.JFrame {
                     .addComponent(lblSaldoCuenta)
                     .addComponent(lbl2)
                     .addComponent(lblNumCuenta))
-                .addContainerGap(328, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlInfoCuentaLayout.setVerticalGroup(
             pnlInfoCuentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -109,23 +106,25 @@ public class MenuClienteFrame extends javax.swing.JFrame {
                 .addComponent(lbl2)
                 .addGap(18, 18, 18)
                 .addComponent(lblSaldoCuenta)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
-        btnTranferir.setBackground(new java.awt.Color(204, 159, 243));
-        btnTranferir.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnTranferir.setText("Transferir");
-        btnTranferir.addActionListener(this::btnTranferirActionPerformed);
+        jPanel1.setBackground(new java.awt.Color(249, 244, 244));
+
+        btnHistorial.setBackground(new java.awt.Color(204, 159, 243));
+        btnHistorial.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnHistorial.setText("Historial");
+        btnHistorial.addActionListener(this::btnHistorialActionPerformed);
 
         btnRetiro50.setBackground(new java.awt.Color(204, 159, 243));
         btnRetiro50.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnRetiro50.setText("Retiro sin cuenta");
         btnRetiro50.addActionListener(this::btnRetiro50ActionPerformed);
 
-        btnHistorial.setBackground(new java.awt.Color(204, 159, 243));
-        btnHistorial.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnHistorial.setText("Historial");
-        btnHistorial.addActionListener(this::btnHistorialActionPerformed);
+        btnTranferir.setBackground(new java.awt.Color(204, 159, 243));
+        btnTranferir.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnTranferir.setText("Transferir");
+        btnTranferir.addActionListener(this::btnTranferirActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -136,13 +135,13 @@ public class MenuClienteFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnTranferir)
-                        .addGap(503, 503, 503))
+                        .addGap(154, 154, 154))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnRetiro50)
-                        .addGap(469, 469, 469))
+                        .addGap(122, 122, 122))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnHistorial)
-                        .addGap(504, 504, 504))))
+                        .addGap(158, 158, 158))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,8 +152,13 @@ public class MenuClienteFrame extends javax.swing.JFrame {
                 .addComponent(btnRetiro50)
                 .addGap(18, 18, 18)
                 .addComponent(btnHistorial)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
+
+        btnRegresar.setBackground(new java.awt.Color(217, 217, 217));
+        btnRegresar.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 36)); // NOI18N
+        btnRegresar.setText("<-");
+        btnRegresar.addActionListener(this::btnRegresarActionPerformed);
 
         javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
         pnlPrincipal.setLayout(pnlPrincipalLayout);
@@ -165,17 +169,19 @@ public class MenuClienteFrame extends javax.swing.JFrame {
                 .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlInfoCuenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlPrincipalLayout.createSequentialGroup()
-                        .addComponent(pnlRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(180, 180, 180))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addComponent(btnRegresar)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlPrincipalLayout.setVerticalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(btnRegresar)
+                .addGap(21, 21, 21)
                 .addComponent(pnlInfoCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -212,31 +218,7 @@ public class MenuClienteFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnHistorialActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MenuClienteFrame().setVisible(true));
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHistorial;
     private javax.swing.JButton btnRegresar;
@@ -250,6 +232,5 @@ public class MenuClienteFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblSaldoCuenta;
     private javax.swing.JPanel pnlInfoCuenta;
     private javax.swing.JPanel pnlPrincipal;
-    private javax.swing.JPanel pnlRegresar;
     // End of variables declaration//GEN-END:variables
 }

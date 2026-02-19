@@ -25,8 +25,4 @@ public class NuevaTransferenciaDTO extends NuevaTransaccionDTO{
     public String getCuentaDestino() {
         return cuentaDestino; 
     }
-    
-    public void setCuentaDestino(String cuentaDestino) {
-        this.cuentaDestino = cuentaDestino; 
-    }
 }

@@ -28,57 +28,89 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnIngresarDestinatario = new javax.swing.JButton();
+        pnlPrincipal = new javax.swing.JPanel();
+        btnSiguiente = new javax.swing.JButton();
         txtNumDestinatario = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        lbl1 = new javax.swing.JLabel();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnIngresarDestinatario.setText("Siguiente");
-        btnIngresarDestinatario.addActionListener(new java.awt.event.ActionListener() {
+        pnlPrincipal.setBackground(new java.awt.Color(249, 244, 244));
+
+        btnSiguiente.setBackground(new java.awt.Color(204, 159, 243));
+        btnSiguiente.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnSiguiente.setText("Siguiente");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIngresarDestinatarioActionPerformed(evt);
+                btnSiguienteActionPerformed(evt);
             }
         });
 
-        txtNumDestinatario.setText("Textfield para ingresar el destinatario");
+        txtNumDestinatario.setFont(new java.awt.Font("Ebrima", 0, 24)); // NOI18N
         txtNumDestinatario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNumDestinatarioActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Numero de cuenta del destinatario");
+        lbl1.setFont(new java.awt.Font("Ebrima", 1, 24)); // NOI18N
+        lbl1.setText("Numero de cuenta del destinatario");
+
+        btnRegresar.setBackground(new java.awt.Color(217, 217, 217));
+        btnRegresar.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 36)); // NOI18N
+        btnRegresar.setText("<-");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
+        pnlPrincipal.setLayout(pnlPrincipalLayout);
+        pnlPrincipalLayout.setHorizontalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(lbl1))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(122, 122, 122)
+                        .addComponent(txtNumDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(236, 236, 236)
+                        .addComponent(btnSiguiente))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)))
+                .addContainerGap(99, Short.MAX_VALUE))
+        );
+        pnlPrincipalLayout.setVerticalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnRegresar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(lbl1)
+                .addGap(18, 18, 18)
+                .addComponent(txtNumDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
+                .addComponent(btnSiguiente)
+                .addGap(134, 134, 134))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
-                        .addComponent(btnIngresarDestinatario)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(txtNumDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73))
+                .addContainerGap()
+                .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(54, 54, 54)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(txtNumDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnIngresarDestinatario)
-                .addContainerGap(36, Short.MAX_VALUE))
+            .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -88,9 +120,13 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNumDestinatarioActionPerformed
 
-    private void btnIngresarDestinatarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarDestinatarioActionPerformed
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnIngresarDestinatarioActionPerformed
+    }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -99,7 +135,7 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://dlbl.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -118,8 +154,10 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnIngresarDestinatario;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton btnRegresar;
+    private javax.swing.JButton btnSiguiente;
+    private javax.swing.JLabel lbl1;
+    private javax.swing.JPanel pnlPrincipal;
     private javax.swing.JTextField txtNumDestinatario;
     // End of variables declaration//GEN-END:variables
 }

@@ -26,17 +26,8 @@ public class NuevaTransaccionDTO {
     public BigDecimal getMonto() {
         return monto; 
     }
-    
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto; 
-    }
 
     public String getNumeroCuenta() {
         return numeroCuenta; 
-    }
-    
-    public void setNumeroCuenta(String numeroCuenta) {
-        this.numeroCuenta = numeroCuenta; 
-    }
-    
+    }  
 }
