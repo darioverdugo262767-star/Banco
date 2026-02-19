@@ -15,6 +15,9 @@ import org.itson.banco.persistencia.PersistenciaException;
  */
 public class MenuClienteFrame extends javax.swing.JFrame {
     
+    private Cliente clienteLogueado;
+    private ITransferenciaDAO transferenciaDAO;
+    private String numCuenta;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuClienteFrame.class.getName());
 
     /**
@@ -22,6 +25,10 @@ public class MenuClienteFrame extends javax.swing.JFrame {
      */
     public MenuClienteFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuenta) {
         initComponents();
+        this.clienteLogueado = clienteLogueado;
+        this.transferenciaDAO = transferenciaDAO;
+        this.numCuenta = numCuenta;
+        
         String nombreCompleto = clienteLogueado.getNombres() + " " + clienteLogueado.getApellidoPaterno();
         this.lblNombreCliente.setText(nombreCompleto);
         this.lblNumCuenta.setText(numCuenta);
@@ -32,6 +39,18 @@ public class MenuClienteFrame extends javax.swing.JFrame {
             this.lblSaldoCuenta.setText("Error");
             ex.printStackTrace();
         }
+    }
+    
+    private void regresar(){
+        ElegirCuentaFrame selector = new ElegirCuentaFrame(this.clienteLogueado, this.transferenciaDAO);
+        selector.setVisible(true);
+        this.dispose();
+    }
+    
+    private void transferir(){
+        IngresarDestinatarioTransferenciaFrame siguiente = new IngresarDestinatarioTransferenciaFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        siguiente.setVisible(true);
+        this.dispose();
     }
 
     /**
@@ -203,11 +222,11 @@ public class MenuClienteFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        // TODO add your handling code here:
+        regresar();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void btnTranferirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTranferirActionPerformed
-        // TODO add your handling code here:
+        transferir();
     }//GEN-LAST:event_btnTranferirActionPerformed
 
     private void btnRetiro50ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetiro50ActionPerformed

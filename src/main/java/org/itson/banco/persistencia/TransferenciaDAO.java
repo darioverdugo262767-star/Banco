@@ -32,10 +32,10 @@ public class TransferenciaDAO implements ITransferenciaDAO {
         Connection conexion = null; 
 
         try {
-            String sqlTrans = "insert into transacciones(monto, numero_Cuenta) values (?, ?)";
+            String sqlTrans = "insert into transacciones(monto, numero_Cuenta, fechaHora) values (?, ?, ?)";
             String sqlTransf = "insert into transferencias(id_transaccion, cuentaDestino) values (?, ?)";
-            String sqlRestar = "UPDATE cuentas SET saldo = saldo - ? WHERE numero_cuenta = ?";
-            String sqlSumar = "UPDATE cuentas SET saldo = saldo + ? WHERE numero_cuenta = ?";
+            String sqlRestar = "UPDATE cuentas SET saldo = saldo - ? WHERE numeroCuenta = ?";
+            String sqlSumar = "UPDATE cuentas SET saldo = saldo + ? WHERE numeroCuenta = ?";
 
             conexion = ConexionBD.crearConexion();
             conexion.setAutoCommit(false);
@@ -43,6 +43,7 @@ public class TransferenciaDAO implements ITransferenciaDAO {
             PreparedStatement comandoT = conexion.prepareStatement(sqlTrans, Statement.RETURN_GENERATED_KEYS);
             comandoT.setBigDecimal(1, nuevaTransferencia.getMonto());
             comandoT.setString(2, nuevaTransferencia.getNumeroCuenta());
+            comandoT.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
             comandoT.execute();
 
             ResultSet rs = comandoT.getGeneratedKeys();
@@ -151,5 +152,22 @@ public class TransferenciaDAO implements ITransferenciaDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("Error al consultar saldo.", e);
         }
+    }
+    
+    public boolean existeCuenta(String numeroCuenta) throws PersistenciaException {
+        String sql = "SELECT COUNT(*) FROM cuentas WHERE numeroCuenta = ?";
+        try (Connection conexion = ConexionBD.crearConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, numeroCuenta);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al validar la cuenta.", e);
+        }
+        return false;
     }
 }

@@ -17,7 +17,7 @@ public class NuevaTransferenciaDTO extends NuevaTransaccionDTO{
         super();
     }
 
-    public NuevaTransferenciaDTO(BigDecimal monto, String numeroCuenta, String cuentaDestino) {
+    public NuevaTransferenciaDTO(String numeroCuenta, String cuentaDestino, BigDecimal monto) {
         super(monto, numeroCuenta);
         this.cuentaDestino = cuentaDestino;
     }

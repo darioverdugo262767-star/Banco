@@ -4,19 +4,76 @@
  */
 package org.itson.banco.presentacion;
 
+import javax.swing.JOptionPane;
+import org.itson.banco.entidades.Cliente;
+import org.itson.banco.persistencia.ITransferenciaDAO;
+import org.itson.banco.persistencia.PersistenciaException;
+
 /**
  *
  * @author PC
  */
 public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
     
+    private Cliente clienteLogueado;
+    private ITransferenciaDAO transferenciaDAO;
+    private String numCuenta;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresarDestinatarioTransferenciaFrame.class.getName());
 
     /**
      * Creates new form IngresarDestinatarioFrame
      */
-    public IngresarDestinatarioTransferenciaFrame() {
+    public IngresarDestinatarioTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuenta) {
         initComponents();
+        this.clienteLogueado = clienteLogueado;
+        this.transferenciaDAO = transferenciaDAO;
+        this.numCuenta = numCuenta; 
+    }
+    
+    public void regresar(){
+        MenuClienteFrame menu = new MenuClienteFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        menu.setVisible(true);
+        this.dispose();
+    }
+    
+    public void siguiente(){
+        String cuentaDestino = this.txtNumDestinatario.getText().trim();
+
+        
+        if (cuentaDestino.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese una cuenta.");
+            return;
+        }
+
+        if (cuentaDestino.equals(this.numCuenta)) {
+            JOptionPane.showMessageDialog(this, "No puedes transferirte a la misma cuenta de origen.");
+            return;
+        }
+        
+        if (cuentaDestino.length() != 16){
+            JOptionPane.showMessageDialog(this, "El numero de cuenta debe de ser de 16 numeros");
+        }
+        
+
+        try {
+
+            if (transferenciaDAO.existeCuenta(cuentaDestino)) {
+                IngresarSaldoTransferenciaFrame siguiente = new IngresarSaldoTransferenciaFrame(
+                    this.clienteLogueado, 
+                    this.transferenciaDAO, 
+                    this.numCuenta, 
+                    cuentaDestino
+                );
+                siguiente.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "La cuenta destino no existe en el sistema.");
+            }
+        } catch (PersistenciaException ex) {
+            JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -121,37 +178,16 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNumDestinatarioActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        // TODO add your handling code here:
+        siguiente();
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        // TODO add your handling code here:
+        regresar();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://dlbl.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new IngresarDestinatarioTransferenciaFrame().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegresar;

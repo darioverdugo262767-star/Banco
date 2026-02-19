@@ -4,6 +4,12 @@
  */
 package org.itson.banco.presentacion;
 
+import java.math.BigDecimal;
+import javax.swing.JOptionPane;
+import org.itson.banco.entidades.Cliente;
+import org.itson.banco.persistencia.ITransferenciaDAO;
+import org.itson.banco.persistencia.PersistenciaException;
+
 /**
  *
  * @author PC
@@ -12,11 +18,70 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresarSaldoTransferenciaFrame.class.getName());
 
-    /**
-     * Creates new form IngresarSaldoTransferenciaFrame
-     */
-    public IngresarSaldoTransferenciaFrame() {
+    private Cliente clienteLogueado;
+    private ITransferenciaDAO transferenciaDAO;
+    private String numCuenta;
+    private String numCuentaDestino;
+    
+
+    public IngresarSaldoTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuentaOrigen, String numCuentaDestino) {
         initComponents();
+        this.clienteLogueado = clienteLogueado;
+        this.transferenciaDAO = transferenciaDAO;
+        this.numCuenta = numCuentaOrigen;
+        this.numCuentaDestino = numCuentaDestino;
+        
+        try {
+            BigDecimal saldo = transferenciaDAO.consultarSaldoCuenta(numCuentaOrigen);
+            this.lblSaldoDisponible.setText("$ " + saldo.toString());
+        } catch (PersistenciaException ex) {
+            this.lblSaldoDisponible.setText("Error");
+        }
+    }
+    
+    private void validarYFinalizar() {
+        String montoStr = this.txtSaldoaIngresar.getText().trim();
+
+        try {
+            BigDecimal monto = new BigDecimal(montoStr);
+
+            if (monto.compareTo(BigDecimal.ZERO) <= 0) {
+                JOptionPane.showMessageDialog(this, "El monto debe ser mayor a cero.");
+                return;
+            }
+
+            BigDecimal saldoActual = transferenciaDAO.consultarSaldoCuenta(this.numCuenta);
+            if (saldoActual.compareTo(monto) < 0) {
+                JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar la transferencia.");
+                return;
+            }
+
+            ConfirmacionTransferenciaFrame confirmacion = new ConfirmacionTransferenciaFrame(
+                this.clienteLogueado,
+                this.transferenciaDAO,
+                this.numCuenta,
+                this.numCuentaDestino,
+                monto
+            );
+            confirmacion.setVisible(true);
+            this.dispose();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor ingrese un monto numérico válido.");
+        } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
+            e.printStackTrace();
+        }
+    }
+    
+    private void regresar() {
+        IngresarDestinatarioTransferenciaFrame anterior = new IngresarDestinatarioTransferenciaFrame(
+            this.clienteLogueado, 
+            this.transferenciaDAO, 
+            this.numCuenta
+        );
+        anterior.setVisible(true);
+        this.dispose();
     }
 
     /**
@@ -143,37 +208,13 @@ public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSaldoaIngresarActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        // TODO add your handling code here:
+        regresar();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        // TODO add your handling code here:
+        validarYFinalizar();
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new IngresarSaldoTransferenciaFrame().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegresar;

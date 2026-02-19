@@ -22,4 +22,6 @@ public interface ITransferenciaDAO {
     List<Cuenta> consultarCuentasPorCliente(Integer idCliente) throws PersistenciaException;
     
     BigDecimal consultarSaldoCuenta(String numeroCuenta) throws PersistenciaException;
+    
+    boolean existeCuenta(String numeroCuenta) throws PersistenciaException;
 }
