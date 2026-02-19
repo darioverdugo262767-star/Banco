@@ -4,20 +4,43 @@
  */
 package org.itson.banco.presentacion;
 
+import javax.swing.JLabel;
+import org.itson.banco.entidades.Cliente;
+import org.itson.banco.entidades.Cuenta;
+import org.itson.banco.entidades.Transaccion;
+import org.itson.banco.entidades.Transferencia;
+import org.itson.banco.persistencia.ITransferenciaDAO;
+
 /**
  *
  * @author PC
  */
 public class ResumenTransferenciaFrame extends javax.swing.JFrame {
-    
+    private Cliente clienteLogueado;
+    private ITransferenciaDAO transferenciaDAO;
+    private String numCuenta;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResumenTransferenciaFrame.class.getName());
 
     /**
      * Creates new form ResumenTransferenciaFrame
      */
-    public ResumenTransferenciaFrame() {
+    public ResumenTransferenciaFrame(Cliente clienteLogueado,Transaccion transaccion,Transferencia transferencia, ITransferenciaDAO transferenciaDAO) {
         initComponents();
+        
+        String MontoTransferido =  transaccion.getMonto()+""+transaccion.getMonto();
+        this.lblMontoTransferido = setText(MontoTransferido);
+        String IdTransferencia =  transferencia.getId_transfencia()+""+transferencia.getId_transfencia();
+        this.lblNumTransferencia = setText(IdTransferencia);
+        String FechaHora =  transaccion.getFechaHora()+""+transaccion.getFechaHora();
+        this.lblFechaOp = setText(FechaHora);
+        }
+    
+    
+    public void continuar(){
+        MenuClienteFrame siguientePantalla = new MenuClienteFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        siguientePantalla.setVisible(true);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -180,7 +203,7 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
-        // TODO add your handling code here:
+        continuar();
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     /**
@@ -205,7 +228,6 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ResumenTransferenciaFrame().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -221,4 +243,8 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblMontoTransferido;
     private javax.swing.JLabel lblNumTransferencia;
     // End of variables declaration//GEN-END:variables
+
+    private JLabel setText(String MontoTransferido) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
