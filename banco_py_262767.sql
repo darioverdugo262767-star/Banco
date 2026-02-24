@@ -199,5 +199,3 @@ UNLOCK TABLES;
 
 -- Dump completed on 2026-02-24 12:48:40
 
-delimiter ;
-
