@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `banco_py1` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `banco_py1`;
--- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
+- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: localhost    Database: banco_py1
+-- Host: localhost    Database: banco_py1v2
 -- ------------------------------------------------------
 -- Server version	8.0.44
 
@@ -33,8 +31,18 @@ CREATE TABLE `clientes` (
   `edad` int NOT NULL,
   `contrasenia` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clientes`
+--
+
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+INSERT INTO `clientes` VALUES (8,'Dario','Verdugo','Tineo','2006-02-13',20,'pepe343'),(9,'Pepe','Pepusio','Wick','2000-01-01',26,'pepe777');
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `cuentas`
@@ -56,6 +64,16 @@ CREATE TABLE `cuentas` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `cuentas`
+--
+
+LOCK TABLES `cuentas` WRITE;
+/*!40000 ALTER TABLE `cuentas` DISABLE KEYS */;
+INSERT INTO `cuentas` VALUES ('0000000000000010',1000.00,'2026-02-24 12:45:45',9,'ACTIVA'),('0000000000000011',20000.00,'2026-02-24 12:45:59',9,'INACTIVA'),('0000000000000012',10000.00,'2026-02-24 12:47:30',8,'ACTIVA'),('0000000000000013',50000.00,'2026-02-24 12:47:41',8,'ACTIVA');
+/*!40000 ALTER TABLE `cuentas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `direccionescliente`
 --
 
@@ -73,6 +91,16 @@ CREATE TABLE `direccionescliente` (
   CONSTRAINT `direccionescliente_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `direccionescliente`
+--
+
+LOCK TABLES `direccionescliente` WRITE;
+/*!40000 ALTER TABLE `direccionescliente` DISABLE KEYS */;
+INSERT INTO `direccionescliente` VALUES (8,'mercadito','1','Centro','Obregon','85000'),(9,'Beltrones','2','Beltrones','Obregon','85000');
+/*!40000 ALTER TABLE `direccionescliente` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `retirossincuenta`
@@ -96,6 +124,15 @@ CREATE TABLE `retirossincuenta` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `retirossincuenta`
+--
+
+LOCK TABLES `retirossincuenta` WRITE;
+/*!40000 ALTER TABLE `retirossincuenta` DISABLE KEYS */;
+/*!40000 ALTER TABLE `retirossincuenta` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `transacciones`
 --
 
@@ -112,6 +149,15 @@ CREATE TABLE `transacciones` (
   CONSTRAINT `transacciones_ibfk_1` FOREIGN KEY (`numero_Cuenta`) REFERENCES `cuentas` (`numeroCuenta`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transacciones`
+--
+
+LOCK TABLES `transacciones` WRITE;
+/*!40000 ALTER TABLE `transacciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `transacciones` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `transferencias`
@@ -131,6 +177,16 @@ CREATE TABLE `transferencias` (
   CONSTRAINT `transferencias_ibfk_2` FOREIGN KEY (`cuentaDestino`) REFERENCES `cuentas` (`numeroCuenta`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transferencias`
+--
+
+LOCK TABLES `transferencias` WRITE;
+/*!40000 ALTER TABLE `transferencias` DISABLE KEYS */;
+/*!40000 ALTER TABLE `transferencias` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -141,29 +197,7 @@ CREATE TABLE `transferencias` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-24  5:34:01
-
-delimiter //
-
-create trigger tg_checar_saldo
-before insert on transacciones
-for each row
-begin
-    if new.monto < 0 and (select saldo from cuentas where numerocuenta = new.numero_cuenta) + new.monto < 0 then
-        signal sqlstate '45000' set message_text = 'no tienes dinero suficiente';
-    end if;
-end //
-
-create procedure sp_transferir(u_origen varchar(20), u_destino varchar(20), cantidad decimal(10,2))
-begin
-    declare exit handler for sqlexception rollback;
-
-    start transaction;
-        update cuentas set saldo = saldo - cantidad where numerocuenta = u_origen;
-        insert into transacciones(fechahora, monto, numero_cuenta, fechahora) values(now(), -cantidad, u_origen, now());
-        update cuentas set saldo = saldo + cantidad where numerocuenta = u_destino;
-    commit;
-end // 
+-- Dump completed on 2026-02-24 12:48:40
 
 delimiter ;
 
