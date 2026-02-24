@@ -1,54 +1,89 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.itson.banco.presentacion;
 
 import java.math.BigDecimal;
 import org.itson.banco.entidades.Cliente;
-import org.itson.banco.persistencia.ITransferenciaDAO;
+import org.itson.banco.negocio.ClientesBO;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.ICuentasBO;
+import org.itson.banco.negocio.ITransferenciasBO;
+import org.itson.banco.negocio.NegocioException;
+import org.itson.banco.negocio.TransferenciasBO;
+import org.itson.banco.persistencia.ICuentasDAO;
+import org.itson.banco.persistencia.ITransferenciasDAO;
 import org.itson.banco.persistencia.PersistenciaException;
+import org.itson.banco.persistencia.TransferenciasDAO;
 
 /**
- *
+ * Ventana de gestión de una cuenta bancaria específica.
+ * Proporciona al cliente una interfaz para visualizar el saldo actual de la cuenta 
+ * seleccionada y acceder a las operaciones de transferencias, retiros sin cuenta 
+ * y consulta de historial de movimientos.
  * @author Dario
  */
-public class MenuClienteFrame extends javax.swing.JFrame {
+public class MenuCuentaFrame extends javax.swing.JFrame {
     
     private Cliente clienteLogueado;
-    private ITransferenciaDAO transferenciaDAO;
+    private final ICuentasBO cuentasBO;
+    private final IClientesBO clientesBO;
     private String numCuenta;
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuClienteFrame.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuCuentaFrame.class.getName());
 
     /**
-     * Creates new form MenuClienteForm
+     * Constructor que inicializa el menú de gestión para una cuenta determinada.
+     * @param clienteLogueado Objeto Cliente que mantiene la sesión activa.
+     * @param cuentasBO Implementación de la lógica de negocio para operaciones de cuentas.
+     * @param numCuenta Identificador único (número de cuenta) de la cuenta a gestionar.
+     * @param clientesBO Implementación de la lógica de negocio para operaciones de clientes.
      */
-    public MenuClienteFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuenta) {
+    public MenuCuentaFrame(Cliente clienteLogueado, ICuentasBO cuentasBO, String numCuenta, IClientesBO clientesBO) {
         initComponents();
         this.clienteLogueado = clienteLogueado;
-        this.transferenciaDAO = transferenciaDAO;
+        this.cuentasBO = cuentasBO;
         this.numCuenta = numCuenta;
+        this.clientesBO = clientesBO;
+        prepararVista();
+    }
+    
+    /**
+     * Configura los elementos visuales de la ventana.
+     * Este método concatena el nombre completo del titular para el encabezado y 
+     * realiza una petición a la capa de negocio ICuentasBO para recuperar 
+     * el saldo disponible más reciente, manejando posibles excepciones de conexión.
+     */
+    private void prepararVista() {
+        // Concatenación de nombre completo para el encabezado
+        String nombre = clienteLogueado.getNombres() + " "
+                + clienteLogueado.getApellidoPaterno() + " "
+                + clienteLogueado.getApellidoMaterno();
+        lblNombreCliente.setText(nombre);
+        lblNumCuenta.setText(numCuenta);
         
-        String nombreCompleto = clienteLogueado.getNombres() + " " + clienteLogueado.getApellidoPaterno();
-        this.lblNombreCliente.setText(nombreCompleto);
-        this.lblNumCuenta.setText(numCuenta);
+        // Consulta de saldo en tiempo real
         try {
-            BigDecimal saldo = transferenciaDAO.consultarSaldoCuenta(numCuenta);
-            this.lblSaldoCuenta.setText("$ " + saldo.toString());
-        } catch (PersistenciaException ex) {
-            this.lblSaldoCuenta.setText("Error");
-            ex.printStackTrace();
+            BigDecimal saldo = cuentasBO.consultarSaldoCuenta(numCuenta);
+            lblSaldoCuenta.setText("$ " + saldo.toString());
+        } catch (NegocioException e) {
+            logger.warning("No se pudo recuperar el saldo de la cuenta: " + numCuenta);
+            lblSaldoCuenta.setText("Saldo no disponible");
         }
     }
     
+    /**
+     * Regresa a la pantalla de selección de cuentas (ElegirCuentaFrame).
+     */
     private void regresar(){
-        ElegirCuentaFrame selector = new ElegirCuentaFrame(this.clienteLogueado, this.transferenciaDAO);
+        ElegirCuentaFrame selector = new ElegirCuentaFrame(this.clienteLogueado, this.cuentasBO, this.clientesBO);
         selector.setVisible(true);
         this.dispose();
     }
     
+    /**
+     * Inicia el flujo de transferencia bancaria.
+     * Navega hacia la captura del destinatario, pasando las dependencias 
+     * necesarias para mantener el contexto de la transacción.
+     */
     private void transferir(){
-        IngresarDestinatarioTransferenciaFrame siguiente = new IngresarDestinatarioTransferenciaFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        IngresarDestinatarioTransferenciaFrame siguiente = new IngresarDestinatarioTransferenciaFrame(this.clienteLogueado, this.cuentasBO, this.numCuenta, this.clientesBO);
         siguiente.setVisible(true);
         this.dispose();
     }

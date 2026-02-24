@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.itson.banco.presentacion;
 
 import java.math.BigDecimal;
@@ -9,61 +5,106 @@ import javax.swing.JOptionPane;
 import org.itson.banco.dtos.NuevaTransferenciaDTO;
 import org.itson.banco.entidades.Cliente;
 import org.itson.banco.entidades.Transferencia;
-import org.itson.banco.persistencia.ITransferenciaDAO;
-import org.itson.banco.persistencia.PersistenciaException;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.ICuentasBO;
+import org.itson.banco.negocio.ITransferenciasBO;
+import org.itson.banco.negocio.NegocioException;
+import org.itson.banco.negocio.TransferenciasBO;
+import org.itson.banco.persistencia.CuentasDAO;
+import org.itson.banco.persistencia.TransferenciasDAO;
 
 /**
- *
- * @author PC
+ * Pantalla de confirmación para transferencias bancarias.
+ * Esta interfaz muestra un resumen de la operación (emisor, destinatario y monto)
+ * y solicita la autorización final del usuario. Al confirmar, delega la 
+ * ejecución a la capa de negocio (BO), asegurando que se cumplan todas las 
+ * reglas bancarias antes de persistir la transacción.
+ * @author Dario
  */
 public class ConfirmacionTransferenciaFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ConfirmacionTransferenciaFrame.class.getName());
     private Cliente clienteLogueado;
-    private ITransferenciaDAO transferenciaDAO;
+    private final ICuentasBO cuentasBO;
+    private final IClientesBO clientesBO;
     private String numCuenta;
     private String numCuentaDestino;
     private BigDecimal monto;
-    /**
-     * Creates new form ConfirmacionTransferenciaFrame
+
+   /**
+     * Constructor que inicializa la vista con los datos de la transferencia pendiente.
+     * Carga la información contextual de la operación y actualiza los componentes 
+     * visuales (etiquetas) para que el usuario pueda validar los datos antes 
+     * de proceder.
+     * @param clienteLogueado El titular de la cuenta que mantiene la sesión activa.
+     * @param cuentasBO Implementación de la lógica de negocio para ejecutar la transferencia.
+     * @param numCuentaOrigen Identificador de la cuenta de cargo (emisor).
+     * @param numCuentaDestino Identificador de la cuenta de abono (destinatario).
+     * @param monto Cantidad económica sujeta a la transacción.
+     * @param clientesBO Implementación de la lógica de negocio para la gestión de clientes.
      */
-    public ConfirmacionTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuentaOrigen, String numCuentaDestino, BigDecimal monto) {
+    public ConfirmacionTransferenciaFrame(Cliente clienteLogueado, ICuentasBO cuentasBO, String numCuentaOrigen, String numCuentaDestino, BigDecimal monto, IClientesBO clientesBO) {
         initComponents();
         this.clienteLogueado = clienteLogueado;
-        this.transferenciaDAO = transferenciaDAO;
+        this.cuentasBO = cuentasBO;
         this.numCuenta = numCuentaOrigen;
         this.numCuentaDestino = numCuentaDestino;
         this.monto = monto;
+        this.clientesBO = clientesBO;
         
+        // Actualización de etiquetas visuales para revisión del usuario
         this.lblEmisor.setText(numCuentaOrigen);
         this.lblDestinatario.setText(numCuentaDestino);
         this.lblMonto.setText("$ " + monto.toString());
+        this.setLocationRelativeTo(null);
     }
     
-    public void confirmar(){
+    /**
+     * Procesa la confirmación de la transferencia.
+     * Crea el DTO necesario y lo envía al objeto de negocio  TransferenciasBO.
+     * Si la operación es exitosa, redirige al usuario a la pantalla de resumen (ticket).
+     * En caso de error de negocio (saldo insuficiente, etc.), muestra un mensaje informativo.
+     */
+    public void confirmar() {
         try {
+            // 1. Inyección de dependencias manual para el BO
+            ITransferenciasBO transferenciaBO = new TransferenciasBO(new TransferenciasDAO(), new CuentasDAO());
+
+            BigDecimal montoConvertido = new BigDecimal(String.valueOf(this.monto));
+            
+            // 2. Preparación del DTO (Data Transfer Object)
             NuevaTransferenciaDTO dto = new NuevaTransferenciaDTO(
-                numCuenta, 
-                numCuentaDestino, 
-                monto
+                    this.numCuenta,
+                    this.numCuentaDestino,
+                    montoConvertido
             );
-            
-            Transferencia transferenciaResultante = transferenciaDAO.crearTransferencia(dto);
-            
-            JOptionPane.showMessageDialog(this, "Transferencia realizada con éxito.");
-            
-            // Volver al menú principal
-            ResumenTransferenciaFrame resumen = new ResumenTransferenciaFrame(clienteLogueado, transferenciaDAO, transferenciaResultante);
+
+            // 3. Ejecución de la lógica de negocio (aquí se aplican validaciones y transacciones SQL)
+            Transferencia transferenciaResultante = transferenciaBO.crearTransferencia(dto, this.clienteLogueado);
+
+            JOptionPane.showMessageDialog(this, "Transferencia realizada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+            // 4. Transición al resumen final de la operación
+            ResumenTransferenciaFrame resumen = new ResumenTransferenciaFrame(this.clienteLogueado, transferenciaResultante, this.cuentasBO, this.clientesBO);
             resumen.setVisible(true);
             this.dispose();
-        } catch (PersistenciaException e) {
-            JOptionPane.showMessageDialog(this, "Error al procesar la transferencia: " + e.getMessage());
+
+        } catch (NegocioException e) {
+            // Manejo de errores controlados (reglas de negocio fallidas)
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error de Negocio", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            // Manejo de errores técnicos inesperados
+            logger.severe("Error inesperado en confirmación: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error Técnico", JOptionPane.ERROR_MESSAGE);
         }
     }
     
+    /**
+     * Cancela la confirmación actual y regresa a la pantalla de ingreso de monto.
+     */
     public void regresar(){
         IngresarSaldoTransferenciaFrame anterior = new IngresarSaldoTransferenciaFrame(
-        this.clienteLogueado, this.transferenciaDAO, this.numCuenta, this.numCuentaDestino);
+        this.clienteLogueado, this.cuentasBO, this.numCuenta, this.numCuentaDestino, this.clientesBO);
         anterior.setVisible(true);
         this.dispose();
     }
@@ -230,9 +271,6 @@ public class ConfirmacionTransferenciaFrame extends javax.swing.JFrame {
         confirmar();
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmar;

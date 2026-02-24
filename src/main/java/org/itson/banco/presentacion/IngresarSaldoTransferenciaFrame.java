@@ -1,84 +1,116 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.itson.banco.presentacion;
 
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import org.itson.banco.entidades.Cliente;
-import org.itson.banco.persistencia.ITransferenciaDAO;
-import org.itson.banco.persistencia.PersistenciaException;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.ICuentasBO;
+import org.itson.banco.negocio.NegocioException;
 
 /**
- *
- * @author PC
+ * Ventana de la interfaz gráfica para la captura del monto a transferir.
+ * Esta pantalla recupera el saldo actual de la cuenta origen y realiza las 
+ * validaciones aritméticas necesarias para asegurar que la transacción sea viable 
+ * antes de proceder a la confirmación final.
+ * @author Dario
  */
 public class IngresarSaldoTransferenciaFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresarSaldoTransferenciaFrame.class.getName());
 
     private Cliente clienteLogueado;
-    private ITransferenciaDAO transferenciaDAO;
+    private final ICuentasBO cuentasBO; 
+    private final IClientesBO clientesBO; 
     private String numCuenta;
     private String numCuentaDestino;
     
-
-    public IngresarSaldoTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuentaOrigen, String numCuentaDestino) {
+    /**
+     * Constructor que inicializa la vista y carga el contexto de la transferencia.
+     * @param clienteLogueado El titular de la cuenta que inició sesión.
+     * @param cuentasBO Implementación de la lógica de negocio para gestión de saldos.
+     * @param numCuentaOrigen Identificador de la cuenta de cargo (quien envía).
+     * @param numCuentaDestino Identificador de la cuenta de abono (quien recibe).
+     * @param clientesBO Implementación de la lógica de negocio para gestión de clientes.
+     */
+    public IngresarSaldoTransferenciaFrame(Cliente clienteLogueado, ICuentasBO cuentasBO, String numCuentaOrigen, String numCuentaDestino, IClientesBO clientesBO) {
         initComponents();
         this.clienteLogueado = clienteLogueado;
-        this.transferenciaDAO = transferenciaDAO;
+        this.cuentasBO = cuentasBO;
         this.numCuenta = numCuentaOrigen;
         this.numCuentaDestino = numCuentaDestino;
+        this.clientesBO = clientesBO;
         
+        cargarSaldo();
+    }
+    
+    /**
+     * Consulta el saldo actual de la cuenta origen en la base de datos para mostrarlo al usuario.
+     */
+    private void cargarSaldo() {
         try {
-            BigDecimal saldo = transferenciaDAO.consultarSaldoCuenta(numCuentaOrigen);
+            BigDecimal saldo = cuentasBO.consultarSaldoCuenta(numCuenta);
             this.lblSaldoDisponible.setText("$ " + saldo.toString());
-        } catch (PersistenciaException ex) {
-            this.lblSaldoDisponible.setText("Error");
+        } catch (NegocioException ex) {
+            logger.severe("Error al cargar saldo: " + ex.getMessage());
+            this.lblSaldoDisponible.setText("Error al cargar saldo");
         }
     }
     
+    /**
+     * Valida el monto ingresado por el usuario.
+     * Comprueba que:
+     * 1. Sea un formato numérico válido.
+     * 2. Sea mayor a cero.
+     * 3. No exceda el saldo disponible en la cuenta de origen.
+     */
     private void validarYFinalizar() {
         String montoStr = this.txtSaldoaIngresar.getText().trim();
 
         try {
             BigDecimal monto = new BigDecimal(montoStr);
 
+            // Validación: Monto positivo
             if (monto.compareTo(BigDecimal.ZERO) <= 0) {
-                JOptionPane.showMessageDialog(this, "El monto debe ser mayor a cero.");
+                JOptionPane.showMessageDialog(this, "El monto debe ser mayor a cero.", "Monto inválido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            BigDecimal saldoActual = transferenciaDAO.consultarSaldoCuenta(this.numCuenta);
+            // Validación: Saldo disponible (Verificación en tiempo real)
+            BigDecimal saldoActual = cuentasBO.consultarSaldoCuenta(this.numCuenta);
             if (saldoActual.compareTo(monto) < 0) {
-                JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar la transferencia.");
+                JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar la transferencia.", "Fondo insuficiente", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // Si las validaciones pasan, avanzamos a la confirmación
             ConfirmacionTransferenciaFrame confirmacion = new ConfirmacionTransferenciaFrame(
                 this.clienteLogueado,
-                this.transferenciaDAO,
+                this.cuentasBO,
                 this.numCuenta,
                 this.numCuentaDestino,
-                monto
+                monto,
+                this.clientesBO
             );
             confirmacion.setVisible(true);
             this.dispose();
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor ingrese un monto numérico válido.");
-        } catch (PersistenciaException e) {
-            JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Por favor ingrese un monto numérico válido (ej. 1500.50).", "Error de formato", JOptionPane.ERROR_MESSAGE);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(this, "Error de conexión con la base de datos.");
+            logger.severe(e.getMessage());
         }
     }
     
+    /**
+     * Regresa a la pantalla anterior para modificar el destinatario.
+     */
     private void regresar() {
         IngresarDestinatarioTransferenciaFrame anterior = new IngresarDestinatarioTransferenciaFrame(
             this.clienteLogueado, 
-            this.transferenciaDAO, 
-            this.numCuenta
+            this.cuentasBO, 
+            this.numCuenta,
+            this.clientesBO
         );
         anterior.setVisible(true);
         this.dispose();

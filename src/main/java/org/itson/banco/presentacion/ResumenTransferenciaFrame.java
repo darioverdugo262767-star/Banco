@@ -1,45 +1,69 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.itson.banco.presentacion;
 
-import javax.swing.JLabel;
 import org.itson.banco.entidades.Cliente;
-import org.itson.banco.entidades.Cuenta;
-import org.itson.banco.entidades.Transaccion;
 import org.itson.banco.entidades.Transferencia;
-import org.itson.banco.persistencia.ITransferenciaDAO;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.ICuentasBO;
 
 /**
- *
- * @author PC
+ * Ventana de resumen y finalización de transferencias.
+ * Actúa como un recibo digital que muestra los detalles finales de una operación 
+ * exitosa, incluyendo el monto, el ID único de transferencia y la fecha exacta 
+ * de la transacción. Esta ventana permite la transición segura de regreso al 
+ * menú principal manteniendo el estado de la sesión.
+ * @author Dario
  */
 public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     private Cliente clienteLogueado;
-    private ITransferenciaDAO transferenciaDAO;
+    private final ICuentasBO cuentasBO; // Agregado
+    private final IClientesBO clientesBO;
     private String numCuenta;
     private Transferencia transferenciaAMostrar;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResumenTransferenciaFrame.class.getName());
 
     /**
-     * Creates new form ResumenTransferenciaFrame
+     * Constructor que inicializa el resumen con los datos de la transferencia recién creada.
+     * @param clienteLogueado El cliente que mantiene la sesión activa.
+     * @param transferencia El objeto de entidad que contiene los datos persistidos en la base de datos.
+     * @param cuentasBO Interfaz de la lógica de negocio para la gestión de cuentas.
+     * @param clientesBO Interfaz de la lógica de negocio para la gestión de clientes.
      */
-    public ResumenTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, Transferencia transferencia) {
+    public ResumenTransferenciaFrame(Cliente clienteLogueado, Transferencia transferencia, ICuentasBO cuentasBO, IClientesBO clientesBO) {
         initComponents();
         this.clienteLogueado = clienteLogueado;
-        this.transferenciaDAO = transferenciaDAO;
         this.transferenciaAMostrar = transferencia;
+        this.cuentasBO = cuentasBO;
+        this.clientesBO = clientesBO;
         this.numCuenta = transferencia.getNumero_Cuenta();
-        this.lblMontoTransferido.setText("$ " + transferencia.getMonto().toString());
-        this.lblNumTransferencia.setText(String.valueOf(transferencia.getId_transfencia()));
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        this.lblFechaOp.setText(sdf.format(transferencia.getFechaHora().getTime()));
+        this.setLocationRelativeTo(null);
+        
+        prepararRecibo();
     }
     
+    /**
+     * Extrae los datos del objeto transferencia y los asigna a los componentes visuales.
+     * Muestra el monto con formato de moneda, el ID de transferencia generado por la 
+     * base de datos y utiliza java.text.SimpleDateFormat para presentar 
+     * la estampa de tiempo de forma legible para el usuario.
+     */
+    private void prepararRecibo() {
+        this.lblMontoTransferido.setText("$ " + transferenciaAMostrar.getMonto().toString());
+        this.lblNumTransferencia.setText(String.valueOf(transferenciaAMostrar.getId_transferencia()));
+        
+        // Formato de fecha y hora para el ticket
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        this.lblFechaOp.setText(sdf.format(transferenciaAMostrar.getFechaHora().getTime()));
+    }
     
+    /**
+     * Finaliza el flujo de la operación y redirige al menú principal.
+     * Inyecta las dependencias necesarias (BOs) a la siguiente ventana MenuCuentaFrame
+     * para asegurar que el saldo actualizado sea consultado correctamente mediante la 
+     * capa de negocio.
+     */
     public void continuar(){
-        MenuClienteFrame siguientePantalla = new MenuClienteFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        // Regresamos al menú con el saldo ya actualizado gracias a la persistencia del paso anterior
+        MenuCuentaFrame siguientePantalla = new MenuCuentaFrame(this.clienteLogueado, this.cuentasBO, this.numCuenta, this.clientesBO);
         siguientePantalla.setVisible(true);
         dispose();
     }
@@ -104,42 +128,42 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         jLabel4.setText("Fecha y hora de la operacion : ");
 
         lblMontoTransferido.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblMontoTransferido.setText("aadafafaf");
+        lblMontoTransferido.setText("AAAAAAAAAAAA");
 
         lblNumTransferencia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblNumTransferencia.setText("adad");
+        lblNumTransferencia.setText("AAAAAAAAA");
 
         lblFechaOp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblFechaOp.setText("adad");
+        lblFechaOp.setText("AAAAAAAAAAAAA");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(117, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(126, 126, 126))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblMontoTransferido)
-                        .addGap(187, 187, 187))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblNumTransferencia)
-                        .addGap(197, 197, 197))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(77, 77, 77))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(175, 175, 175)
+                        .addComponent(lblMontoTransferido))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(jLabel3)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(103, 103, 103))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblFechaOp)
-                        .addGap(192, 192, 192))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(150, 150, 150)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(108, 108, 108)
+                        .addComponent(jLabel4))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(171, 171, 171)
+                        .addComponent(lblFechaOp))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(182, 182, 182)
+                        .addComponent(lblNumTransferencia)))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,11 +172,11 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(lblMontoTransferido)
-                .addGap(19, 19, 19)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(lblNumTransferencia)
-                .addGap(18, 18, 18)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(lblFechaOp)
@@ -166,19 +190,19 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(111, 111, 111))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(106, 106, 106)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnConfirmar)
-                .addGap(185, 185, 185))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(190, 190, 190)
+                        .addComponent(btnConfirmar)))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,10 +234,6 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
         continuar();
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JLabel jLabel1;
@@ -228,7 +248,4 @@ public class ResumenTransferenciaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblNumTransferencia;
     // End of variables declaration//GEN-END:variables
 
-    private JLabel setText(String MontoTransferido) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

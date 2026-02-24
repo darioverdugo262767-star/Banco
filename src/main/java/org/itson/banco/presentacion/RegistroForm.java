@@ -1,0 +1,392 @@
+package org.itson.banco.presentacion;
+
+import java.text.ParseException;
+import java.util.GregorianCalendar;
+import javax.swing.JOptionPane;
+import org.itson.banco.dtos.NuevaDireccionClienteDTO;
+import org.itson.banco.dtos.NuevoClienteDTO;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.NegocioException;
+import org.itson.banco.utileria.Metodos;
+
+/**
+ * Formulario de registro para nuevos clientes del banco.
+ * Esta clase se encarga de capturar tanto la información personal del cliente 
+ * como su información domiciliaria, empaquetándolas en objetos DTO para su 
+ * procesamiento en la capa de negocio. Incluye validaciones de mayoría de edad 
+ * y formato de fecha.
+ * @author Dario
+ */
+public class RegistroForm extends javax.swing.JFrame {
+    
+    private final IClientesBO clientesBO;
+    
+    /**
+     * Constructor que inyecta la lógica de negocio necesaria para el registro.
+     * @param clientesBO Interfaz de la lógica de negocio de clientes.
+     */
+    public RegistroForm(IClientesBO clientesBO) {
+        initComponents();
+        this.clientesBO = clientesBO;
+        this.setLocationRelativeTo(null); // Centrar formulario
+    }
+    
+    /**
+     * Procesa el registro del nuevo cliente.
+     * Realiza los siguientes pasos:
+     * 1. Extrae los datos de los campos de texto.
+     * 2. Valida que los campos obligatorios no estén vacíos.
+     * 3. Convierte y valida la fecha de nacimiento (Regla: Edad >= 18).
+     * 4. Crea y puebla los DTOs de Cliente y Dirección.
+     * 5. Solicita la persistencia a través del BO.
+     */
+    public void registrarse(){
+       // 1. Recolección de datos personales
+       String nombre = txtNombre.getText().trim();
+       String apellidoPaterno = txtApellidoP.getText().trim();
+       String apellidoMaterno = txtApellidoM.getText().trim();
+       String contrasena = new String(txtContraseña.getPassword());
+       String fechaTexto = txtFechaNacimiento.getText().trim(); 
+
+       // 2. Recolección de datos del Domicilio
+       String calle = txtCalle.getText().trim();
+       String colonia = txtColonia.getText().trim();
+       String ciudad = txtCiudad.getText().trim();
+       String numero = txtNumero.getText().trim();
+       String cp = txtCp.getText().trim();
+
+       // 3. Validación de campos obligatorios
+       if (nombre.isEmpty() || apellidoPaterno.isEmpty() || contrasena.isEmpty() || calle.isEmpty()) {
+           JOptionPane.showMessageDialog(this, "Por favor, llene todos los campos obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
+           return;
+       }
+
+       try {
+           // Conversión de fecha usando utilería personalizada
+           GregorianCalendar fechaNacimiento = Metodos.convertirStringAGregorian(fechaTexto);
+
+           // Validación de Regla de Negocio: Mayoría de edad
+           if (Metodos.calcularEdad(fechaNacimiento) < 18) {
+               JOptionPane.showMessageDialog(this, "Debes ser mayor de edad (18 años) para registrarte.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+               return;
+           }
+
+           // 4. Preparación de DTOs para la transferencia de datos entre capas
+           NuevoClienteDTO nuevoCliente = new NuevoClienteDTO();
+           nuevoCliente.setNombres(nombre);
+           nuevoCliente.setApellidoPaterno(apellidoPaterno);
+           nuevoCliente.setApellidoMaterno(apellidoMaterno);
+           nuevoCliente.setContraseña(contrasena);
+           nuevoCliente.setFechaNacimiento(fechaNacimiento);
+
+           NuevaDireccionClienteDTO nuevaDireccion = new NuevaDireccionClienteDTO();
+           nuevaDireccion.setCalle(calle);
+           nuevaDireccion.setColonia(colonia);
+           nuevaDireccion.setCiudad(ciudad);
+           nuevaDireccion.setNumero(numero);
+           nuevaDireccion.setCodigoPostal(cp);
+
+           // 5. Delegación a la capa de negocio
+           clientesBO.crearCliente(nuevoCliente, nuevaDireccion);
+
+           JOptionPane.showMessageDialog(this, "¡Registro exitoso! Ya puede iniciar sesión.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+           // Navegación de retorno
+           LoginFrame login = new LoginFrame(this.clientesBO);
+           login.setVisible(true);
+           this.dispose();
+
+       } catch (ParseException ex) {
+           JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/YYYY", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+       } catch (NegocioException ex) {
+           JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de Negocio", JOptionPane.ERROR_MESSAGE);
+       }
+    }
+    
+    /**
+     * Regresa a la pantalla de selección de cuentas (LoginFrame).
+     */
+    private void regresar(){
+        LoginFrame login = new LoginFrame(this.clientesBO);
+        login.setVisible(true);
+        this.dispose();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        pnlPrincipal = new javax.swing.JPanel();
+        lbl2 = new javax.swing.JLabel();
+        lbl1 = new javax.swing.JLabel();
+        lbl3 = new javax.swing.JLabel();
+        lbl4 = new javax.swing.JLabel();
+        lbl5 = new javax.swing.JLabel();
+        lbl6 = new javax.swing.JLabel();
+        txtApellidoP = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
+        txtApellidoM = new javax.swing.JTextField();
+        lbl7 = new javax.swing.JLabel();
+        txtCiudad = new javax.swing.JTextField();
+        lbl8 = new javax.swing.JLabel();
+        txtNumero = new javax.swing.JTextField();
+        lbl9 = new javax.swing.JLabel();
+        txtCalle = new javax.swing.JTextField();
+        lbl10 = new javax.swing.JLabel();
+        txtColonia = new javax.swing.JTextField();
+        lbl11 = new javax.swing.JLabel();
+        txtCp = new javax.swing.JTextField();
+        btnRegistrarse = new javax.swing.JButton();
+        txtFechaNacimiento = new javax.swing.JFormattedTextField();
+        lbl12 = new javax.swing.JLabel();
+        txtContraseña = new javax.swing.JPasswordField();
+        btnRegresar = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        pnlPrincipal.setBackground(new java.awt.Color(249, 244, 244));
+
+        lbl2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl2.setText("Nombre:");
+
+        lbl1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbl1.setText("Registro");
+
+        lbl3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl3.setText("Apellido Paterno:");
+
+        lbl4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl4.setText("Fecha de Nacimiento:");
+
+        lbl5.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl5.setText("Apellido Materno:");
+
+        lbl6.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl6.setText("Calle:");
+
+        txtApellidoP.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtNombre.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtApellidoM.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbl7.setText("Domicilio");
+
+        txtCiudad.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl8.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl8.setText("Numero:");
+
+        txtNumero.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl9.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl9.setText("Ciudad:");
+
+        txtCalle.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl10.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl10.setText("Colonia:");
+
+        txtColonia.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl11.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl11.setText("C.P:");
+
+        txtCp.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        btnRegistrarse.setBackground(new java.awt.Color(204, 159, 243));
+        btnRegistrarse.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnRegistrarse.setText("Registrarse");
+        btnRegistrarse.addActionListener(this::btnRegistrarseActionPerformed);
+
+        try {
+            txtFechaNacimiento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txtFechaNacimiento.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        lbl12.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl12.setText("Contraseña:");
+
+        txtContraseña.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        btnRegresar.setBackground(new java.awt.Color(217, 217, 217));
+        btnRegresar.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 36)); // NOI18N
+        btnRegresar.setText("<-");
+        btnRegresar.addActionListener(this::btnRegresarActionPerformed);
+
+        javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
+        pnlPrincipal.setLayout(pnlPrincipalLayout);
+        pnlPrincipalLayout.setHorizontalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)
+                        .addGap(269, 269, 269)
+                        .addComponent(lbl1))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lbl7)
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl6)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCalle, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(28, 28, 28)
+                                .addComponent(lbl8)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtNumero))
+                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lbl3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtApellidoP, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl5)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtApellidoM, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl4)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addGap(310, 310, 310)
+                                        .addComponent(btnRegistrarse))
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl10)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtColonia, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                        .addComponent(lbl12)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtContraseña)
+                                        .addGap(180, 180, 180)))
+                                .addGap(0, 10, Short.MAX_VALUE))
+                            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                                .addComponent(lbl9)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lbl11)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCp)))))
+                .addGap(40, 40, 40))
+        );
+        pnlPrincipalLayout.setVerticalGroup(
+            pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl1)
+                    .addComponent(btnRegresar))
+                .addGap(36, 36, 36)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl2)
+                    .addComponent(lbl3)
+                    .addComponent(txtApellidoP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl5)
+                    .addComponent(txtApellidoM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl4)
+                    .addComponent(txtFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl12)
+                    .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lbl7)
+                .addGap(18, 18, 18)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl8)
+                    .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl6))
+                .addGap(18, 18, 18)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtColonia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl10))
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbl9)
+                            .addComponent(lbl11)))
+                    .addGroup(pnlPrincipalLayout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(txtCp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addComponent(btnRegistrarse)
+                .addGap(31, 31, 31))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarseActionPerformed
+        registrarse();
+    }//GEN-LAST:event_btnRegistrarseActionPerformed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        regresar();
+    }//GEN-LAST:event_btnRegresarActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRegistrarse;
+    private javax.swing.JButton btnRegresar;
+    private javax.swing.JLabel lbl1;
+    private javax.swing.JLabel lbl10;
+    private javax.swing.JLabel lbl11;
+    private javax.swing.JLabel lbl12;
+    private javax.swing.JLabel lbl2;
+    private javax.swing.JLabel lbl3;
+    private javax.swing.JLabel lbl4;
+    private javax.swing.JLabel lbl5;
+    private javax.swing.JLabel lbl6;
+    private javax.swing.JLabel lbl7;
+    private javax.swing.JLabel lbl8;
+    private javax.swing.JLabel lbl9;
+    private javax.swing.JPanel pnlPrincipal;
+    private javax.swing.JTextField txtApellidoM;
+    private javax.swing.JTextField txtApellidoP;
+    private javax.swing.JTextField txtCalle;
+    private javax.swing.JTextField txtCiudad;
+    private javax.swing.JTextField txtColonia;
+    private javax.swing.JPasswordField txtContraseña;
+    private javax.swing.JTextField txtCp;
+    private javax.swing.JFormattedTextField txtFechaNacimiento;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtNumero;
+    // End of variables declaration//GEN-END:variables
+}

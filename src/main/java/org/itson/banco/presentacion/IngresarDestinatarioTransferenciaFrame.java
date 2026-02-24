@@ -1,77 +1,100 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.itson.banco.presentacion;
 
 import javax.swing.JOptionPane;
 import org.itson.banco.entidades.Cliente;
-import org.itson.banco.persistencia.ITransferenciaDAO;
-import org.itson.banco.persistencia.PersistenciaException;
+import org.itson.banco.negocio.IClientesBO;
+import org.itson.banco.negocio.ICuentasBO;
+import org.itson.banco.negocio.NegocioException;
+
 
 /**
- *
- * @author PC
+ * Ventana de la interfaz gráfica destinada a la captura y validación de la cuenta destino.
+ * Esta clase actúa como el primer filtro en el proceso de transferencia, realizando 
+ * validaciones sintácticas (formato) y semánticas (existencia en la base de datos) 
+ * antes de proceder al ingreso del monto.
+ * @author Dario
  */
 public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
     
     private Cliente clienteLogueado;
-    private ITransferenciaDAO transferenciaDAO;
+    private final ICuentasBO cuentasBO;
+    private final IClientesBO clientesBO;
     private String numCuenta;
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresarDestinatarioTransferenciaFrame.class.getName());
 
     /**
-     * Creates new form IngresarDestinatarioFrame
+     * Constructor que inicializa los componentes y mantiene el contexto operativo.
+     * Establece la conexión entre el cliente autenticado, la cuenta de origen 
+     * seleccionada y las capas de negocio necesarias para validar la existencia 
+     * de cuentas en pasos posteriores.
+     * @param clienteLogueado El titular de la cuenta que mantiene la sesión activa.
+     * @param cuentasBO Implementación de la lógica de negocio para la gestión de cuentas.
+     * @param numCuenta Identificador único de la cuenta de origen (emisor).
+     * @param clientesBO Implementación de la lógica de negocio para la gestión de clientes.
      */
-    public IngresarDestinatarioTransferenciaFrame(Cliente clienteLogueado, ITransferenciaDAO transferenciaDAO, String numCuenta) {
+    public IngresarDestinatarioTransferenciaFrame(Cliente clienteLogueado, ICuentasBO cuentasBO, String numCuenta, IClientesBO clientesBO) {
         initComponents();
         this.clienteLogueado = clienteLogueado;
-        this.transferenciaDAO = transferenciaDAO;
+        this.cuentasBO = cuentasBO;
         this.numCuenta = numCuenta; 
+        this.clientesBO = clientesBO; 
+        this.setLocationRelativeTo(null);
     }
     
+    /**
+     * Cierra la ventana actual y regresa al menú principal de la cuenta de origen.
+     */
     public void regresar(){
-        MenuClienteFrame menu = new MenuClienteFrame(this.clienteLogueado, this.transferenciaDAO, this.numCuenta);
+        MenuCuentaFrame menu = new MenuCuentaFrame(this.clienteLogueado, this.cuentasBO, this.numCuenta, this.clientesBO);
         menu.setVisible(true);
         this.dispose();
     }
     
+    /**
+     * Realiza las validaciones de la cuenta destino.
+     * Verifica que:
+     * 1. El campo no esté vacío.
+     * 2. El destino no sea la misma cuenta de origen.
+     * 3. Cumpla con el estándar de 16 dígitos.
+     * 4. La cuenta exista físicamente en los registros del banco.
+     */
     public void siguiente(){
         String cuentaDestino = this.txtNumDestinatario.getText().trim();
-
         
+        // Validación: Campo obligatorio
         if (cuentaDestino.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, ingrese una cuenta.");
             return;
         }
 
+        // Validación: Regla de negocio (Auto-transferencia prohibida en este flujo)
         if (cuentaDestino.equals(this.numCuenta)) {
             JOptionPane.showMessageDialog(this, "No puedes transferirte a la misma cuenta de origen.");
             return;
         }
         
+        // Validación: Formato bancario
         if (cuentaDestino.length() != 16){
-            JOptionPane.showMessageDialog(this, "El numero de cuenta debe de ser de 16 numeros");
+            JOptionPane.showMessageDialog(this, "El número de cuenta debe ser de 16 dígitos.");
+            return; // Añadido return para evitar que siga el proceso si el formato es incorrecto
         }
-        
 
         try {
-
-            if (transferenciaDAO.existeCuenta(cuentaDestino)) {
+            // Validación: Existencia en BD
+            if (cuentasBO.existeCuenta(cuentaDestino)) {
                 IngresarSaldoTransferenciaFrame siguiente = new IngresarSaldoTransferenciaFrame(
                     this.clienteLogueado, 
-                    this.transferenciaDAO, 
-                    this.numCuenta, 
-                    cuentaDestino
+                    this.cuentasBO, 
+                    this.numCuenta,
+                    cuentaDestino,
+                    this.clientesBO
                 );
                 siguiente.setVisible(true);
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "La cuenta destino no existe en el sistema.");
+                JOptionPane.showMessageDialog(this, "La cuenta destino no existe en el sistema.", "Cuenta no encontrada", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (PersistenciaException ex) {
-            JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, "Error técnico al consultar la cuenta. Intente más tarde.");
             ex.printStackTrace();
         }
     }
@@ -185,9 +208,6 @@ public class IngresarDestinatarioTransferenciaFrame extends javax.swing.JFrame {
         regresar();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegresar;
